@@ -1,0 +1,29 @@
+/* Extraction Query for Sales Analytics Project 
+Source: SQL Server 
+*/
+
+WITH CTE AS(
+SELECT 
+a.Product,
+a.Category,
+a.Brand,
+a.Description,
+a.Cost_Price,
+a.Sale_Price,
+a.Image_URL,
+b.Date,
+b.Customer_Type,
+b.Discount_Band,
+b.Units_Sold,
+(Sale_Price * Units_Sold) AS Revenue,
+(Cost_Price * Units_Sold) AS Total_cost,
+format(date,'MMMM') AS Month,
+format(date,'YYYY') AS Year
+FROM Product_data a
+JOIN product_sales b
+ON a.product_id = b.Product)
+
+SELECT *,
+(1- DISCOUNT * 1.0/100) * revenue AS Discount_revenue FROM CTE a
+JOIN discount_data b
+ON a.Discount_Band = b.Discount_Band AND a.Month = b.Month
